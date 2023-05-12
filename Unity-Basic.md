@@ -198,7 +198,7 @@
 	쉽게 말해 필요에 따라 일시 정지할 수 있는 기능을 말한다.
 
 > Unity에서 코루틴은 실행을 일시 정지하고 제어를 Unity에 반환하지만 
-> <br/>중단한 부분에서 다음 프레임을 계속할 수 있는 메서드입니다.
-> <br/> - From Unity Documentation
+><br/> 중단한 부분에서 다음 프레임을 계속할 수 있는 메서드입니다.
+><br/> - From Unity Documentation
 
 
