@@ -163,11 +163,11 @@ AddComponenet 함수를 사용하면 스크립트 내에서 Object에 T 컴포넌트를 추가해줄 수 
 
 **InputManager**
 
-	여러 장치의 입력을 입력매니저에 이름과 입력을 정의
+여러 장치의 입력을 입력매니저에 이름과 입력을 정의
 	
-	입력매니저의 이름으로 정의한 입력의 변경사항을 확인
+입력매니저의 이름으로 정의한 입력의 변경사항을 확인
 	
-	유니티 에디터의 Edit -> Project Settings -> Input Manager 에서 관리
+유니티 에디터의 Edit -> Project Settings -> Input Manager 에서 관리
 
 ```cs
 	private void InputByInputManager()
@@ -193,11 +193,11 @@ AddComponenet 함수를 사용하면 스크립트 내에서 Object에 T 컴포넌트를 추가해줄 수 
 
 **InputSystem**
 
-	Unity 2019.1 부터 지원하게 된 입력방식
+Unity 2019.1 부터 지원하게 된 입력방식
 
-	컴포넌트를 통해 입력의 변경사항을 확인
+컴포넌트를 통해 입력의 변경사항을 확인
 
-	GamePad, JoyStick, Mouse, Keyboard, Pointer, Pen, TouchScreen, XR 기기 등을 지원
+GamePad, JoyStick, Mouse, Keyboard, Pointer, Pen, TouchScreen, XR 기기 등을 지원
 
 ```cs
 	private void InputByInputSystem()
