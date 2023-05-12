@@ -1,7 +1,10 @@
-# UnityStudy
+# Unity °øºÎ¿ë ÀÌ·Ğ Á¤¸®
 
-ìœ ë‹ˆí‹° ê¸°ë³¸ êµ¬ì¡° , ì´í•´ ë¥¼ ìœ„í•œ ì •ë¦¬ íŒŒì¼ë“¤ ëª¨ìŒì…ë‹ˆë‹¤.
+[À¯´ÏÆ¼ ±âº» ±¸Á¶ ¹× ÀÌ·Ğ](./Unity-Basic.md)
 
-[ìœ ë‹ˆí‹° ì„¸íŒ… íŒ](./Unity-Setting.md)
+[À¯´ÏÆ¼ ±âº» ÇÔ¼ö](./Unity-Basic-Functions.md)
 
-[ìœ ë‹ˆí‹° ê¸°ë³¸ êµ¬ì¡° ë° ì´ë¡ ](./Unity-Basic.md)
+
+Âü°íÇÑ ÀÚ·á
+
+https://github.com/jungtaek6681/Unity-Basic
