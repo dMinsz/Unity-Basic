@@ -6,6 +6,7 @@
 
 * [GameObject 관련 함수들](#GameObject-관리)
 * [입력 관련 함수들](#사용자-입력-관련-함수)
+* [TransForm](#Transform-Functions)
 
 ## GameObject 관리
 
@@ -195,9 +196,16 @@ AddComponenet 함수를 사용하면 스크립트 내에서 Object에 T 컴포넌트를 추가해줄 수 
 
 Unity 2019.1 부터 지원하게 된 입력방식
 
+**유니티 패키지 매니저에서 unity Resistry 에 InputSystem 를 설치해 주면 사용가능하다.**
+
 컴포넌트를 통해 입력의 변경사항을 확인
 
 GamePad, JoyStick, Mouse, Keyboard, Pointer, Pen, TouchScreen, XR 기기 등을 지원
+
+> 유니티 에셋스토어에 Oculus Integration 에셋을 이용해도 오큘러스 vr 을 입력매니저로 사용가능 하게 도와주지만
+><br/> 업데이트 중지 되었기 때문에 두개다 알아둬야한다.
+
+
 
 ```cs
 	private void InputByInputSystem()
@@ -213,3 +221,149 @@ GamePad, JoyStick, Mouse, Keyboard, Pointer, Pen, TouchScreen, XR 기기 등을 지원
 		Vector2 input = value.Get<Vector2>();
 	}
 ```
+
+### Input System 사용법
+
+* 유니티 패키지 매니저에서 unity Resistry 에 InputSystem 를 설치
+* 입력을 받고자하는 오브젝트 에 Component로 추가해준다
+* Actions 를 새로 만들거나 디폴트를 사용해준다.
+
+![InputSystemIamges](./Images/InputSystemActions.png)
+
+
+
+## Transform Functions
+
+* 게임오브젝트의 위치, 회전, 크기를 저장하는 컴포넌트
+* 게임오브젝트의 부모-자식 상태를 저장하는 컴포넌트
+* 게임오브젝트는 반드시 하나의 트랜스폼 컴포넌트를 가지고 있으며 추가 & 제거할 수 없음
+
+### Translate
+
+트랜스폼 이동
+
+AddForce 와 다르게 위치이동이기 때문에 가속, 감속하는 느낌은 나지않는다.
+
+게임 오브젝트는 만드시 트랜스폼 을 가지고 있기때문에 접근및 사용가능하다.
+
+Translate : 트랜스폼의 이동 함수
+
+```cs
+	private void TranslateMove()
+	{
+		// 백터를 이용한 이동
+		transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+		// x,y,z를 이용한 이동
+		transform.Translate(0, 0, moveSpeed * Time.deltaTime);
+	}
+```
+
+
+트랜스폰의 이동 기준이 나뉘게되는데
+
+월드맵 기준으로 , 로컬을 기준으로 , 다른 대상을 기준으로 이동을 할 수 있다.
+
+```cs
+	private void TransformMoveSpace()
+	{
+		// 월드를 기준으로 이동
+		transform.Translate(1, 0, 0, Space.World);
+		// 로컬을 기준으로 이동
+		transform.Translate(1, 0, 0, Space.Self);
+		// 다른 대상을 기준으로 이동
+		transform.Translate(1, 0, 0, Camera.main.transform);
+	}
+```
+
+### Ratation
+
+트랜스폼의 회전
+
+```cs
+	// <트랜스폼 회전>
+	// Rotate : 트랜스폼의 회전 함수
+	private void Rotate()
+	{
+		// 축을 이용한 회전 (축을 기준으로 시계방향으로 회전)
+		transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime);
+		// 오일러를 이용한 회전
+		transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
+		// x,y,z를 이용한 회전
+		transform.Rotate(0, rotateSpeed * Time.deltaTime, 0);
+	}
+
+	// <트랜스폼 회전 기준>
+	private void RotateSpace()
+	{
+		// 월드를 기준으로 회전
+		transform.Rotate(1, 0, 0, Space.World);
+		// 로컬을 기준으로 회전
+		transform.Rotate(1, 0, 0, Space.Self);
+		// 위치를 기준으로 회전
+		transform.RotateAround(Camera.main.transform.position, Vector3.up, 1);
+	}
+```
+
+
+```cs
+// <트랜스폼 LookAt 회전>
+	// LookAt : 위치를 바라보는 방향으로 회전
+	private void LookAt()
+	{
+		// 위치를 바라보는 회전
+		transform.LookAt(new Vector3(0, 0, 0));
+		// 머리의 방향을 추가한 바라보는 회전
+		transform.LookAt(new Vector3(0, 0, 0), Vector3.right);
+	}
+```
+
+
+#### 트랜스폼 부모-자식 상태
+
+ 트랜스폼은 부모 트랜스폼을 가질 수 있음
+
+부모 트랜스폼이 있는 경우 부모 트랜스폼의 위치, 회전, 크기 변경이 같이 적용됨
+
+이를 이용하여 계층적 구조를 정의하는데 유용함 (ex. 팔이 움직이면, 손가락도 같이 움직임)
+
+하이어라키 창 상에서 드래그 & 드롭을 통해 부모-자식 상태를 변경할 수 있음
+
+```cs
+	private void TransformParent()
+	{
+		GameObject newGameObject = new GameObject() { name = "NewGameObject" };
+
+		// 부모 지정
+		transform.parent = newGameObject.transform;
+
+		// 부모를 기준으로한 트랜스폼
+		// transform.localPosition	: 부모트랜스폼이 있는 경우 부모를 기준으로 한 위치
+		// transform.localRotation	: 부모트랜스폼이 있는 경우 부모를 기준으로 한 회전
+		// transform.localScale		: 부모트랜스폼이 있는 경우 부모를 기준으로 한 크기
+
+		// 부모 해제
+		transform.parent = null;
+
+		// 월드를 기준으로한 트랜스폼
+		// transform.localPosition == transform.position	: 부모트랜스폼이 없는 경우 월드를 기준으로 한 위치
+		// transform.localRotation == transform.rotation	: 부모트랜스폼이 없는 경우 월드를 기준으로 한 회전
+		// transform.localScale								: 부모트랜스폼이 없는 경우 월드를 기준으로 한 크기
+	}
+```
+
+### Quarternion & Euler
+
+Quarternion	: 유니티의 게임오브젝트의 3차원 방향을 저장하고 이를 방향에서 다른 방향으로의 상대 회전으로 정의
+
+기하학적 회전으로 짐벌락 현상이 발생하지 않음
+
+EulerAngle	: 3축을 기준으로 각도법으로 회전시키는 방법 
+
+직관적이지만 짐벌락 현상이 발생하여 회전이 겹치는 축이 생길 수 있음
+	
+> 짐벌락 : 같은 방향으로 오브젝트의 두 회전 축이 겹치는 현상
+
+
+Quarternion을 통해 회전각도를 계산하는 것은 직관적이지 않고 이해하기 어려움
+
+보통의 경우 쿼터니언 -> 오일러각도 -> 연산진행 -> 결과오일러각도 -> 결과쿼터니언 과 같이 연산의 결과 쿼터니언을 사용함
