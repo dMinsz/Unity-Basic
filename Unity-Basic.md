@@ -650,9 +650,7 @@
 		private void OnDestroy()
 		{//오브젝트가 삭제시 본인을 삭제하는 것을 추가
 			if (instance == this)
-			{
-				Destroy(this);
-			}
+				instance = null;
 		}
 
 	}
