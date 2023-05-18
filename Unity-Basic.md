@@ -23,6 +23,8 @@
 
  [8. UI](#UI)
 
+ [9. Scene](#Scene)
+
 ## 기본 구조
 
 유니티 엔진은 내부적으로 네이티브 C/C++ 로 빌드 되었지만, 
@@ -36,11 +38,11 @@
 
 그래서 유니티는 추가로 메시지 시스템이라는 걸 사용한다.
 
-메시지 브로드캐스팅 을 통해서 여러 개의 컴포넌트를 관리 및 사용한다.
+메시지 시스템의 기능중하나인 메시지 브로드캐스팅 을 통해서 여러 개의 컴포넌트를 관리 및 사용한다.
 
 >Update() 를 실행시킬때 모든 오브젝트에 Update() 실행하라고 메시지를 날림 / update가 없으면 반응안함
 
-이러한 유니티의 모든 컴포넌트는 MonoBehavior를 상속하여 만들어진다.
+이러한 기능이 가능한 이유는 유니티의 모든 컴포넌트가 MonoBehavior를 상속하여 만들어 져서 이다.
 
 **참고**
 
@@ -92,16 +94,16 @@
 ### MonoBehaviour 컴포넌트와 달리 추가된 기능
 
 #### 스크립트 직렬화 기능
-	- 인스펙터 창에서 컴포넌트의 맴버변수 값을 확인하거나 변경하는 기능
-	- 컴포넌트의 값형식 데이터를 확인하거나 변경
-	- 컴포넌트의 참조형식 데이터를 드래그 앤 드랍 방식으로 연결
+- 인스펙터 창에서 컴포넌트의 맴버변수 값을 확인하거나 변경하는 기능
+- 컴포넌트의 값형식 데이터를 확인하거나 변경
+- 컴포넌트의 참조형식 데이터를 드래그 앤 드랍 방식으로 연결
 
-	> 직렬화 가능한 데이터 
-	><br> 1. 기본 자료형, 기본 자료형의 선형자료구조, 참조형 데이터
-	><br> 2. 유니티의 자료형, 유니티 컴포넌트, 유니티 이벤트
+> 직렬화 가능한 데이터 
+><br> 1. 기본 자료형, 기본 자료형의 선형자료구조, 참조형 데이터
+><br> 2. 유니티의 자료형, 유니티 컴포넌트, 유니티 이벤트
 
-	 <추가> 어트리뷰트
-	- 클래스, 프로퍼티 또는 함수 위에 명시하여 특별한 동작을 나타낼 수 있는 마커
+어트리뷰트
+- 클래스, 프로퍼티 또는 함수 위에 명시하여 특별한 동작을 나타낼 수 있는 마커
 
 ```cs
 	[Header("구분용헤더")] // 인스펙터창에 이름 짓기 및 분할용
@@ -406,6 +408,9 @@
 
 특정 오브젝트의 속성이 시간에 따라 변경되는 정보를 연속적으로 진행하는 시스템
 
+스파인,프레임,휴머노이드 애니메이션 등의 시스템을 이용할 수 있다.
+
+유니티는 기본적으로는 메카님이라고 불리는 시스템을 사용한다.
 
 **<애니메이션 구성요소>**
 * 애니메이션 클립 : 특정 오브젝트의 속성이 시간에 따라 변경되는 정보의 에셋
@@ -463,3 +468,70 @@
  **Event System**
 * 키보드, 마우스, 터치, 커스텀 입력 등 입력 기반 어플리케이션의 오브젝트에 이벤트를 전송하는 방법
 * UI를 추가하는 경우 자동으로 씬에 포함되지만, 런타임 당시에 UI를 생성하는 경우에 주의
+
+> Canvas 에 Canvas Scaler 컴포넌트에 Scale with screen size 세팅으로 동적 으로 UI 크기가 정해지게
+> <br/> 만드는 것이 다양한 스크린 크기에 대응 할 수 있는 UI로 만들 수 있다.
+
+## Scene
+
+
+씬 (Scene)
+
+* 유니티에서 게임월드를 구성하는 단위
+* 프로젝트에 원하는 수만큼 씬을 포함할 수 있음
+* 단일 씬에서 간단한 게임을 빌드할 수도 있으며, 여러 씬을 전환하며 게임을 진행 할 수도 있음
+* 다중 씬을 이용하여 여러 씬을 동시에 열어 같은 게임월드에서 사용도 가능함
+
+
+빌드 설정
+
+* 씬에 대한 스크립팅 전, 게임 빌드 설정에서 씬을 포함시켜야 해당 씬을 사용 가능
+
+> File -> Build Settings -> Scene In Build 에 포함시킬 씬을 추가 해주면 된다.
+> <br/> 이러한 추가된 씬의 순서를 인덱스로 사용하거나 이름을 사용하여 씬을 추가및 변환 등을 할 수 있다.
+
+**사용하는 함수**
+
+```cs
+	// <씬 로드>
+	public void ChangeSceneByName(string sceneName)
+	{
+		SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+	}
+
+	public void ChangeSceneByIndex(int sceneIndex)
+	{
+		SceneManager.LoadScene(sceneIndex, LoadSceneMode.Single);
+	}
+
+	// <씬 추가>
+	public void AddSceneByName(string sceneName)
+	{
+		SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+	}
+
+	public void AddSceneByIndex(int sceneIndex)
+	{
+		SceneManager.LoadScene(sceneIndex, LoadSceneMode.Additive);
+	}
+
+	// <비동기 씬 로드>
+	public void ChangeSceneASync(string sceneName)
+	{
+		// 비동기 씬 로드 : 백그라운드로 씬을 로딩하도록 하여 게임 중 멈춤이 없도록 함
+		AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+		
+		asyncOperation.allowSceneActivation = true;     // 씬 로딩 완료시 바로 씬 로드를 진행하는지 여부
+		bool isLoad = asyncOperation.isDone;			// 씬 로딩이 완료되었는지 판단
+		float progress = asyncOperation.progress;       // 씬 로딩률 확인
+		asyncOperation.completed += (oper) => { };		// 씬 로딩 완료시 진행할 이벤트 추가
+	}
+
+	// <Don't destroy on load>
+	// 씬의 전환에도 제거되지 않기 원하는 게임오브젝트의 경우 지워지지 않는 씬의 오브젝트로 추가하는 방법을 사용
+	// (동작 방법은 다중 씬을 통한 로드시에 제거되지 않는 씬을 구성하는 방법)
+	public void SetDontDestroyOnLoad(GameObject go)
+	{
+		DontDestroyOnLoad(go);
+	}
+```
