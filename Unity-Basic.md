@@ -1,5 +1,8 @@
 # 유니티 기본 구조 및 이론
 
+유니티에서 자주 사용하는 함수들 ->
+ [링크](./Unity-Basic-Functions.md)
+
 # 목차
 
 [0. 기본 구조](#기본-구조)
@@ -27,6 +30,8 @@
 
  [10. 자주 사용되는 디자인패턴](#useful-design-pattern)
   - [10.1 싱글톤 패턴](#singleton-pattern)
+  - [10.2 퍼사드 패턴](#facade-pattern)
+  - [10.3 MVC 패턴](#mvc-pattern)
 
 ## 기본 구조
 
@@ -677,3 +682,112 @@
 		}
 	}
 ```
+
+
+## Facade Pattern
+
+커다란 코드 부분에 대한 간략화된 인터페이스를 제공하는 구조적 디자인 패턴
+
+퍼사드 객체는 복잡한 소프트웨어 바깥쪽의 코드가 라이브러리의 안쪽 코드에 의존하는 일을 감소
+
+복잡한 과정을 간단하게 접근할 수 있는 인터페이스를 제공
+
+> 한번에 구현하지말고 각각의 역할별로 컴포넌트로 나눠서 구현하자.
+
+구현 :
+
+Facade 클래스는 Subsystem 클래스들을 혼합하여 Client가 요청할 수 있는 간단한 함수를 제공
+
+장점 :
+
+1. Subsystem 간의 결합도를 낮춤
+2. Client 입장에서 더욱 간결한 코드로 접근할 수 있음
+
+단점 :
+
+1. Client에게 내부 Subsystem까지 숨길 수 없음
+2. Client가 Subsystem 내부의 클래스를 직접 사용하는 것을 막을 수 없음
+
+
+![FasadePattern](./Images/facade_concept.png)
+
+
+## Observer Pattern
+
+옵저버는 객체의 상태 변화를 관찰하는 관찰자
+
+관찰대상객체는 옵저버들의 목록을 등록하여 보관
+
+관찰대상객체에 상태 변화가 있을 때마다 등록한 옵저버들에게 알림
+
+구현 :
+
+0. C#의 경우 event delegate를 이용하여 옵저버 패턴을 적용가능
+0. Unity의 경우 UnityEvent를 이용하여 옵저버 패턴을 적용가능
+1. 관찰대상객체에 옵저버들의 목록과 옵저버의 등록, 해제를 구현
+2. 옵저버는 관찰대상객체에 상태 변화를 알림 받고 싶은 경우 목록에 등록
+3. 관찰대상객체에 상태 변하가 있는 경우 목록의 옵저버들을 순회하며 알림
+
+장점 :
+1. 클래스간의 느슨한 연결구조로 유연한 객체지향 시스템을 구축
+2. 개방폐쇄원칙을 준수하게 됨
+3. 프레임마다 상태 변화를 확인하는 방법보다 콜백방식을 통해 연산량을 줄일 수 있음
+
+단점 :
+1. 알림이 가는 순서를 보장할 수 없음
+2. 부주의한 사용은 이벤트 연쇄, 순환 구조 등의 문제가 생길 수 있음
+
+
+유니티 이벤트를 사용해서 구현하는 것이 편하다. 
+
+```cs
+	public class DataManager : MonoBehaviour
+	{
+		[SerializeField] private int ShootCount = 0;
+
+		public UnityEvent<int> OnShootCountChanged;
+
+		public void AddShootCount(int count) 
+		{
+			ShootCount += count;
+			OnShootCountChanged?.Invoke(count);
+		}
+	}
+```
+
+
+![유니티이벤트](./Images/UnityEvent.png)
+
+
+## MVC Pattern
+
+MVC(Model-View-Controller) 패턴
+
+사용자 인터페이스, 데이터, 논리로직을 분리하여 프로그램을 관리하는 패턴
+
+구현 방법 :
+
+* Model
+	* 프로그램의 데이터
+	* Controller에 의해 갱신
+	* 데이터의 변경을 View에게 알림
+* View
+	* 사용자 인터페이스
+	* Model의 데이터를 기반으로 사용자에게 내용 표현
+	* 사용자에게 입력을 받아 Controller에게 알림
+* Controller	
+	* 논리로직
+	* View의 입력을 받아 논리로직을 처리
+	* 논리로직의 결과를 Model에 갱신
+
+장점 :
+1. 설계패턴 중 가장 단순하게 구현가능
+2. 프로그램의 구성 요소를 영향없이 쉽게 고칠 수 있도록 제안
+3. 유지보수성, 어플리케이션의 확장성, 유연성과 코드재사용성이 좋아짐
+
+단점 :
+1. Model과 View의 의존성이 높음
+
+그외 :
+
+MVC 패턴의 파생형인 MVP(Model-View-Presenter), MVVM(Model-View-ViewModel) 패턴이 있음
