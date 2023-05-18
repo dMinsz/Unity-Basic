@@ -1,6 +1,6 @@
 # 유니티 기본 구조 및 이론
 
-#목차
+# 목차
 
 [0. 기본 구조](#기본-구조)
 
@@ -24,6 +24,9 @@
  [8. UI](#UI)
 
  [9. Scene](#Scene)
+
+ [10. 자주 사용되는 디자인패턴](#useful-design-pattern)
+  - [10.1 싱글톤 패턴](#singleton-pattern)
 
 ## 기본 구조
 
@@ -533,5 +536,146 @@
 	public void SetDontDestroyOnLoad(GameObject go)
 	{
 		DontDestroyOnLoad(go);
+	}
+```
+
+## Useful Design Pattern
+
+게임 개발에서 많이 쓰이는 디자인 패턴 간단 소개
+
+> 용도에 따라 다양한 디자인 패턴이있지만 게임 개발에 많이 쓰이는
+> <br/> 디자인패턴 몇까지를 소개 및 설명 해보려한다. 
+
+> 디자인 패턴에 너무 고정된 사고를 하는 것보단 제대로 이해해서 여러 변형을 할 수 있는 것이 좋다.
+
+
+### SingleTon Pattern
+
+오직 한 개의 클래스 인스턴스만을 갖도록 보장 이에 대한 전역적인 접근점을 제공
+
+**구현 방법**
+
+1. 전역에서 접근 가능한 인스턴스의 주소를 갖기 위해
+데이터 영역 메모리 공간을 활용 (정적변수)
+2. 정적변수를 활용하여 캡슐화를 진행
+3. 생성자의 접근권한을 외부에서 생성할 수 없도록 제한
+4. Instance 속성를 통해 인스턴스에 접근할 수 있도록 함
+5. instance 변수는 단 하나만 있도록 유지
+
+> 하나의 인스턴스만을 사용 할 수 있게 하는 것이 중요하다.
+
+**장점**
+1. 하나뿐인 존재로 주요 클래스, 관리자의 역할을 함
+2. 전역적 접근으로 참조에 필요한 작업이 없이 빠른접근가능
+3. 인스턴스들이 싱글톤을 통하여 데이터를 공유하기 쉬워짐
+
+**단점**
+1. 싱글톤이 너무 많은 책임을 짊어지는 경우를 주의해야함
+2. 싱글톤의 남발로 전역접근이 많아지게 되는 경우, 참조한 코드 결합도가 높아짐
+3. 싱글톤의 데이터를 공유할 경우 데이터 변조에 주의해야함
+
+
+사용 예시
+
+뭐든지 하나의 인스턴스로 관리하는 것에 많이 쓰인다.
+
+게임 매니저, 게임의 몬스터 스폰을 관리하는 매니저 클래스 , 사운드 매니저, 퀘스트 매니저 등등
+
+
+**기본적인 싱글톤 패턴의 구조 구현 코드**
+
+```cs
+	// 많이쓰이는 프로퍼티 방식으로 구현한 싱글톤 패턴 
+	public class SingleTon
+	{
+		private static SingleTon instance;
+
+		public static SingleTon Instance
+		{
+			get
+			{
+				if (instance == null)
+					instance = new SingleTon();
+
+				return instance;
+			}
+		}
+
+		private SingleTon() { }
+	}
+
+	// 함수 형식으로 만든 싱글톤 패턴
+	public class SingleTon
+	{
+		private static SingleTon instance;
+
+		public static SingleTon GetInstance
+		{
+			if (instance == null)
+				instance = new SingleTon();
+
+			return instance;	
+		}
+
+		private SingleTon() { }
+	}
+
+	//아래의 코드로 사용가능
+
+	//new SingleTon(); // 사용불가
+	SingleTon.Instance; // 프로퍼티로 구현
+	SingleTon.GetInstance(); // 함수로 구현
+```
+
+```cs
+	//Unity 에서 싱글턴 패턴
+	public class GameManager : MonoBehaviour
+	{
+		private static GameManager instance;
+		public static GameManager Instance { get { return instance; } }
+		private GameManager() { }
+    
+		private void Awake()
+		{// 유니티에서는 에디터상에서 추가할 수 있기때문에 그것을 막기위해 이런식으로 구현
+			if (instance != null)
+			{
+				Destroy(this);
+				return;
+			}
+			DontDestroyOnLoad(this); // 유니티는 씬을 전환하면 자동으로 오브젝트들이 삭제된다
+                                 // 해당 코드로 삭제 안하고 유지
+			instance = this;
+		}
+		
+		private void OnDestroy()
+		{//오브젝트가 삭제시 본인을 삭제하는 것을 추가
+			if (instance == this)
+			{
+				Destroy(this);
+			}
+		}
+
+	}
+
+```
+
+유니티에서는 한가지를 더 추가 하는 것이 좋은데
+
+유니티가 시작하자마자 게임매니저를 하나 만들어주는 것이 좋다.
+
+```cs
+	// 게임 시작하자마자 해야하는 작업들을 위한 클래스
+	public class GameSetting 
+	{
+		//게임시작하자마자 아래의 함수를 호출해준다.
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		private static void Init()
+		{ 
+			if (GameManager.Instance == null)
+			{
+				GameObject gameManager = new GameObject() { name = "GameManager" };
+				gameManager.AddComponent<GameManager>();
+			}
+		}
 	}
 ```
