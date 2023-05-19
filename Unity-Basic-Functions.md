@@ -7,6 +7,7 @@
 * [GameObject 관련 함수들](#GameObject-관리)
 * [입력 관련 함수들](#사용자-입력-관련-함수)
 * [TransForm](#Transform-Functions)
+* [유용한 어트리뷰트](#useful-attributes)
 
 ## GameObject 관리
 
@@ -367,3 +368,53 @@ EulerAngle	: 3축을 기준으로 각도법으로 회전시키는 방법
 Quarternion을 통해 회전각도를 계산하는 것은 직관적이지 않고 이해하기 어려움
 
 보통의 경우 쿼터니언 -> 오일러각도 -> 연산진행 -> 결과오일러각도 -> 결과쿼터니언 과 같이 연산의 결과 쿼터니언을 사용함
+
+
+# UseFul Attributes
+
+사용할때 유용한 몇까지 어트리뷰트들
+
+
+```cs
+	
+	//어트리뷰트들
+
+	//static 함수 앞에 이 어트리뷰트를 사용하면 게임이 시작하자마자 아래의 함수를 무조건 사용한다.
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Init(){}
+
+
+	[HideInInspector] // 변수 인스펙터창에 숨기기
+	[SerializeField] // 변수 인스펙터창에 보이기
+
+	[Header("player Event")] // 인스펙터창에 이름 지어주기
+
+	[RequireComponent(typeof(Rigidbody))] // 컴포넌트 무조건 추가하기
+
+	
+	//참고
+	DontDestroyOnLoad(this); // 게임오브젝트를 씬이 바뀌어도 삭제하지않고 유지하게 해준다.
+
+
+```
+
+
+표로 더 많은 어트리뷰트들 정리
+
+|어트리뷰트|	설명|
+|---|---|
+|SerializeField	|private, protected 변수를 인스펙터에 표시|
+|Serializable	|커스텀 클래스를 인스펙터에 표시|
+|Header	|변수위에 타이틀을 설정해 카테고리 분류 가능, 인스펙터 외관 정리에 사용|
+|HideInInspector|	public 변수를 인스펙터에서 숨길수 있음|
+|RequireComponent|	필수 컴포넌트를 추가 할 수 있음|
+|Range|	int, float 변수를 슬라이드바로 표시하고 범위를 제한함|
+|Space|	변수와 변수 사이에 간격 주기|
+|CreateAssetMenu|	ScriptableObject Asset을 생성할때 사용하는 메뉴를 추가 할 때 사용|
+|MenuItem|	임의의 함수 ( static ) 실행을 메뉴 항목으로 추가|
+|ContextMenu|	임의의 함수 ( non-static ) 실행을 컴포넌트 톱니 메뉴에 추가|
+|AddComponentMenu|	인스펙터의 AddComponent 메뉴 항목으로 컴포넌트를 추가 할때 사용|
+|ExecuteInEditMode|	에디터가 플레이 모드가 아니더라도 컴포넌트가 동작하도록 할때 사용|
+|Multiline|	string 변수를 여러줄 입력 가능하게 만들때 사용|
+|TextArea|	Multiline과 비슷, 폭에 맞춰 자동으로 줄바꿈과 슬라이드바 표시|
+|Tooltip|	인스펙터에 표시되는 변수에 설명을 추가 할때 사용|
